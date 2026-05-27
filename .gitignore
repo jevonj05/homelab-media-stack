@@ -1,0 +1,42 @@
+# Environment / secrets
+.env
+*.env
+.env.*
+*.key
+*.pem
+
+# Databases
+*.db
+*.sqlite
+
+# Logs
+*.log
+*.pid
+
+# Media
+media/
+downloads/
+photos/
+
+# Video files
+*.mkv
+*.mp4
+*.avi
+*.m2ts
+*.mov
+
+# Images
+*.jpg
+*.jpeg
+*.png
+*.heic
+
+# Docker app data
+docker/
+config/
+appdata/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
