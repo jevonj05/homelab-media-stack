@@ -1,0 +1,104 @@
+version: "3.9"
+
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /mnt/storage/docker/radarr:/config
+      - /mnt/storage/media:/media
+    networks:
+      - media_stack
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /mnt/storage/docker/sonarr:/config
+      - /mnt/storage/media:/media
+    networks:
+      - media_stack
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /mnt/storage/docker/sabnzbd:/config
+      - /mnt/storage/media:/media
+      - /home/jevonj05/sab-cache:/sab-cache
+    networks:
+      - media_stack
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /mnt/storage/docker/prowlarr:/config
+    networks:
+      - media_stack
+
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    restart: unless-stopped
+    ports:
+      - "5055:5055"
+    environment:
+      - TZ=America/New_York
+      - PORT=5055
+    volumes:
+      - /mnt/storage/docker/overseerr:/app/config
+    networks:
+      - media_stack
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - WEBUI_PORT=8080
+    volumes:
+      - /mnt/storage/docker/qbittorrent:/config
+      - /mnt/storage/media:/media
+    networks:
+      - media_stack
+
+networks:
+  media_stack:
+    name: media_stack
+    driver: bridge
