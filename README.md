@@ -1,13 +1,33 @@
 # Automated Media Homelab
 
-This project documents my self-hosted media automation stack built on Ubuntu using Docker, Plex, Usenet, and Tailscale.
+A self-hosted Ubuntu environment built to automate media acquisition, organization, storage, and remote access using Docker-based services and a dedicated storage architecture.
 
-The goal of this homelab was to build a private media automation system where I can request a movie or TV show and have the full pipeline automatically download, organize, scan, and make it available in Plex.
+This repository documents the infrastructure, configuration approach, troubleshooting process, and operational lessons behind the build.
 
----
+## Project Overview
 
-# Stack
+The goal was to create a reliable homelab workflow where a media request can move through discovery, download, organization, and library availability with minimal manual intervention.
 
+```text
+Request
+  ↓
+Seerr
+  ↓
+Radarr / Sonarr
+  ↓
+Prowlarr
+  ↓
+SABnzbd / qBittorrent
+  ↓
+Media Storage
+  ↓
+Plex
+```
+
+## Technology Stack
+
+- Ubuntu Linux
+- Docker / Docker Compose
 - Plex Media Server
 - Seerr
 - Radarr
@@ -17,30 +37,11 @@ The goal of this homelab was to build a private media automation system where I 
 - qBittorrent
 - Immich
 - Tailscale
-- Docker
+- Git
 
----
+## Storage Architecture
 
-
-# Architecture
-
-```
-Seerr
-↓
-Radarr / Sonarr
-↓
-Prowlarr
-↓
-SABnzbd
-↓
-Newshosting / Usenet
-↓
-Media Storage
-↓
-Plex
-
-
-Storage Layout
+```text
 /mnt/storage
 ├── backups
 ├── docker
@@ -50,65 +51,78 @@ Storage Layout
 │   └── tv
 ├── photos
 └── homelab-git
+```
 
-What I Learned
+Persistent application data, downloads, media libraries, photos, backups, and Git-managed homelab files are separated to make the environment easier to maintain and recover.
 
-This project helped me practice:
+## Engineering Challenges
 
-Ubuntu Linux Commands
-Linux storage management
-Docker containers
-Docker networking
-Bind mounts and persistent volumes
-API configuration between services
-Media automation
-Service troubleshooting
-Remote access with Tailscale
-Git-based infrastructure documentation
+Building the stack required troubleshooting several real infrastructure issues, including:
 
+- Docker containers operating on different networks
+- Understanding why `localhost` inside a container does not refer to the Docker host
+- Resolving inconsistent download and import paths between containers
+- Managing Linux mount points without hiding existing data
+- Recovering media during a storage migration
+- Rebuilding Radarr after database corruption
+- Configuring Plex library scans after automated imports
+- Maintaining persistent application data across container changes
 
-Major Troubleshooting Lessons
+## What I Practiced
 
-Some of the biggest problems I solved included:
+This project provided hands-on experience with:
 
-Docker containers being on different networks
-Services failing because localhost inside a container does not mean the host machine
-SABnzbd path issues between /config/Downloads and shared /media mounts
-Linux mountpoints hiding files underneath /mnt/storage
-Recovering media after a mount migration
-Rebuilding Radarr after database corruption
-Making Plex scan libraries automatically
+- Linux system administration
+- Docker containers and networking
+- Bind mounts and persistent volumes
+- Linux storage management
+- Service-to-service API configuration
+- Infrastructure troubleshooting
+- Remote access through Tailscale
+- Git-based infrastructure documentation
+- Designing recoverable self-hosted services
 
+## Current Status
 
-Current Status
+The primary automation pipeline is operational:
 
-The full automation flow is working:
+```text
+Request → Search → Download → Import → Store → Plex Library
+```
 
-Request in Seerr
+The repository is being expanded as the homelab evolves.
 
-→ Radarr or Sonarr receives request
-→ Prowlarr searches indexers
-→ SABnzbd downloads through Usenet
-→ Media imports into /mnt/storage/media
-→ Plex scans and displays the content
+## Roadmap
 
-Future Improvements
-Add full Docker Compose management
-Add automated backups
-Add monitoring with Grafana
-Add Tailscale access documentation
-Add scripts for container updates
-Add Recyclarr for quality profile management
-Add Bazarr for subtitles
-Add screenshots and architecture diagrams
+- [ ] Expand Docker Compose management
+- [ ] Add automated configuration backups
+- [ ] Add service and host monitoring
+- [ ] Document Tailscale remote administration
+- [ ] Add container maintenance scripts
+- [ ] Add Recyclarr quality-profile management
+- [ ] Add Bazarr subtitle automation
+- [ ] Add architecture diagrams and sanitized screenshots
+- [ ] Integrate the environment with my Homelab Sysadmin AI project
 
-Security Notes
+## Security
 
-This repository does not include:
-API keys
-Passwords
-Plex tokens
-Media files
-Database files
-Private photos
-Real .env files
+Secrets and private data are intentionally excluded from this repository. Public commits should never contain:
+
+- API keys
+- Passwords
+- Plex tokens
+- Private IP or identity information that is not required for documentation
+- Media files
+- Application databases
+- Private photos
+- Production `.env` files
+
+Example configuration should use placeholders or sanitized values.
+
+## Related Work
+
+This homelab is also the test environment for an in-development **AI-assisted Linux system administration project** that uses Python health checks, Docker diagnostics, network checks, and a local Ollama model to analyze system state and assist with troubleshooting.
+
+---
+
+**Built and documented by Jevon Johnson**
